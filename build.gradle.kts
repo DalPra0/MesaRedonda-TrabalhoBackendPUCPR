@@ -23,12 +23,9 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1")
 	implementation("tools.jackson.module:jackson-module-kotlin")
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.boot:spring-boot-h2console")
-	runtimeOnly("com.h2database:h2")
-	testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
+
 	testImplementation("org.springframework.boot:spring-boot-starter-validation-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
@@ -51,6 +48,11 @@ dependencies {
 	//Externalized configuration
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
+	//Teste unitário
+	val kotest = "6.2.5"
+	testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotest")
+	testImplementation("io.kotest:kotest-assertions-core:$kotest")
+	testImplementation("io.mockk:mockk-jvm:1.14.11")
 }
 
 kotlin {
