@@ -1,5 +1,7 @@
 package br.pucpr.authserver
 
+import br.pucpr.authserver.boardgames.Tag
+import br.pucpr.authserver.boardgames.TagRepository
 import br.pucpr.authserver.roles.Role
 import br.pucpr.authserver.roles.RoleRepository
 import br.pucpr.authserver.users.User
@@ -11,7 +13,8 @@ import org.springframework.stereotype.Component
 @Component
 class Bootstrapper(
     val rolesRepository: RoleRepository,
-    val userRepository: UserRepository
+    val userRepository: UserRepository,
+    val tagRepository: TagRepository,
 ) : ApplicationListener<ContextRefreshedEvent> {
     override fun onApplicationEvent(event: ContextRefreshedEvent) {
         //Cria os papéis ADMIN e PREMIUM USER, se não existirem
@@ -30,6 +33,17 @@ class Bootstrapper(
             )
             admin.roles.add(adminRole)
             userRepository.save(admin)
+        }
+
+        listOf(
+            "party" to "Party",
+            "euro" to "Euro",
+            "coop" to "Coop",
+            "deducao" to "Dedução",
+        ).forEach { (slug, label) ->
+            if (tagRepository.findBySlug(slug) == null) {
+                tagRepository.save(Tag(slug = slug, label = label))
+            }
         }
     }
 }

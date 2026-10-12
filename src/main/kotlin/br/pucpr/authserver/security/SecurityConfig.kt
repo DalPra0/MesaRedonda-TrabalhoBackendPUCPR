@@ -37,6 +37,9 @@ class SecurityConfig(
                     .requestMatchers(HttpMethod.GET).permitAll()
                     .requestMatchers(HttpMethod.POST, "/users").permitAll()
                     .requestMatchers(HttpMethod.POST, "/users/login").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/board-games").permitAll()
+                    .requestMatchers(HttpMethod.PUT, "/board-games/*").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/board-games/*/tags/*").permitAll()
                     .requestMatchers("/h2-console/**").permitAll()
                     .anyRequest().authenticated()
             }
