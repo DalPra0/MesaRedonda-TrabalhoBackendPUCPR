@@ -1,0 +1,36 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# JVM
+*.log
+*.hprof
+hs_err_pid*
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Spring / local config (NUNCA commitar segredo)
+.env
+.env.*
+!.env.example
+application-local.yml
+application-local.properties
+**/application-local.yml
+
+# Docker volumes locais (se usar)
+postgres-data/
+
+# Kotlin
+.kotlin/
