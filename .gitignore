@@ -34,3 +34,5 @@ postgres-data/
 
 # Kotlin
 .kotlin/
+
+logs/
