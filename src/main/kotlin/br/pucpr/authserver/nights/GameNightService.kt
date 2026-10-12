@@ -3,6 +3,7 @@ package br.pucpr.authserver.nights
 import br.pucpr.authserver.boardgames.BoardGameRepository
 import br.pucpr.authserver.exception.NotFoundException
 import br.pucpr.authserver.exceptions.BadRequestException
+import br.pucpr.authserver.music.MusicService
 import br.pucpr.authserver.users.SortDir
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Sort
@@ -19,6 +20,7 @@ class GameNightService(
     val memberRepository: MemberRepository,
     val boardGameRepository: BoardGameRepository,
     val scoreService: ScoreService,
+    val musicService: MusicService,
 ) {
     fun insert(night: GameNight): GameNight {
         validate(night)
@@ -56,6 +58,7 @@ class GameNightService(
     @Transactional
     fun delete(id: Long) {
         val night = findById(id)
+        musicService.deleteForNight(id)
         scoreService.deleteScoresForNight(id)
         nightGameRepository.deleteAll(nightGameRepository.findByNightId(id))
         registrationRepository.deleteAll(registrationRepository.findByNightId(id))
