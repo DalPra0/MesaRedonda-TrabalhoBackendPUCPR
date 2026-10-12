@@ -2,6 +2,7 @@ package br.pucpr.authserver.boardgames
 
 import br.pucpr.authserver.exception.NotFoundException
 import br.pucpr.authserver.exceptions.BadRequestException
+import br.pucpr.authserver.nights.ScoreService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.checkUnnecessaryStub
@@ -18,7 +19,8 @@ import java.util.Optional
 class BoardGameServiceTest {
     private val repository = mockk<BoardGameRepository>()
     private val tagRepository = mockk<TagRepository>()
-    private val service = BoardGameService(repository, tagRepository)
+    private val scoreService = mockk<ScoreService>()
+    private val service = BoardGameService(repository, tagRepository, scoreService)
 
     @BeforeEach
     fun setUp() {
@@ -27,7 +29,7 @@ class BoardGameServiceTest {
 
     @AfterEach
     fun tearDown() {
-        checkUnnecessaryStub(repository, tagRepository)
+        checkUnnecessaryStub(repository, tagRepository, scoreService)
     }
 
     @Test
@@ -101,12 +103,14 @@ class BoardGameServiceTest {
     fun `delete should remove the game`() {
         val game = oneBoardGame(tags = mutableSetOf(oneTag()))
         every { repository.findById(1L) } returns Optional.of(game)
+        every { scoreService.deleteScoresForBoardGame(1L) } returns Unit
         every { repository.save(game) } returns game
         every { repository.delete(game) } returns Unit
 
         service.delete(1L)
 
         game.tags.isEmpty() shouldBe true
+        verify(exactly = 1) { scoreService.deleteScoresForBoardGame(1L) }
         verify(exactly = 1) { repository.delete(game) }
     }
 

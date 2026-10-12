@@ -26,12 +26,14 @@ class GameNightServiceTest {
     private val registrationRepository = mockk<NightRegistrationRepository>()
     private val memberRepository = mockk<MemberRepository>()
     private val boardGameRepository = mockk<BoardGameRepository>()
+    private val scoreService = mockk<ScoreService>()
     private val service = GameNightService(
         repository,
         nightGameRepository,
         registrationRepository,
         memberRepository,
         boardGameRepository,
+        scoreService,
     )
 
     @BeforeEach
@@ -47,6 +49,7 @@ class GameNightServiceTest {
             registrationRepository,
             memberRepository,
             boardGameRepository,
+            scoreService,
         )
     }
 
@@ -151,6 +154,7 @@ class GameNightServiceTest {
         val nightGame = oneNightGame(night = night)
         val registration = oneRegistration(night = night)
         every { repository.findById(1L) } returns Optional.of(night)
+        every { scoreService.deleteScoresForNight(1L) } returns Unit
         every { nightGameRepository.findByNightId(1L) } returns listOf(nightGame)
         every { nightGameRepository.deleteAll(listOf(nightGame)) } returns Unit
         every { registrationRepository.findByNightId(1L) } returns listOf(registration)
@@ -159,6 +163,7 @@ class GameNightServiceTest {
 
         service.delete(1L)
 
+        verify(exactly = 1) { scoreService.deleteScoresForNight(1L) }
         verify(exactly = 1) { repository.delete(night) }
     }
 

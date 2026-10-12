@@ -2,16 +2,19 @@ package br.pucpr.authserver.boardgames
 
 import br.pucpr.authserver.exception.NotFoundException
 import br.pucpr.authserver.exceptions.BadRequestException
+import br.pucpr.authserver.nights.ScoreService
 import br.pucpr.authserver.users.SortDir
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class BoardGameService(
     val repository: BoardGameRepository,
     val tagRepository: TagRepository,
+    val scoreService: ScoreService,
 ) {
     fun insert(game: BoardGame): BoardGame {
         validate(game)
@@ -65,8 +68,10 @@ class BoardGameService(
         return saved
     }
 
+    @Transactional
     fun delete(id: Long) {
         val game = findById(id)
+        scoreService.deleteScoresForBoardGame(id)
         game.tags.clear()
         repository.save(game)
         repository.delete(game)

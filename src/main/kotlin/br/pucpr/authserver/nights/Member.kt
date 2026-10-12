@@ -16,6 +16,10 @@ class Member(
     @Column
     var email: String? = null,
 
+    /**
+     * Soma de [scorePoints] de todos os placares do membro na temporada.
+     * Recalculado ao criar, atualizar ou apagar um [ScoreEntry].
+     */
     @Column(nullable = false)
     var seasonPoints: Int = 0,
 )
