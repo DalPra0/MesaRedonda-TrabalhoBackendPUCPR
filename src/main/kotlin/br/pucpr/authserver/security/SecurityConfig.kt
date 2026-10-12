@@ -40,6 +40,10 @@ class SecurityConfig(
                     .requestMatchers(HttpMethod.POST, "/board-games").permitAll()
                     .requestMatchers(HttpMethod.PUT, "/board-games/*").permitAll()
                     .requestMatchers(HttpMethod.POST, "/board-games/*/tags/*").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/game-nights").permitAll()
+                    .requestMatchers(HttpMethod.PUT, "/game-nights/*").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/game-nights/*/games/*").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/game-nights/*/members/*").permitAll()
                     .requestMatchers("/h2-console/**").permitAll()
                     .anyRequest().authenticated()
             }
