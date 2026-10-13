@@ -1,5 +1,6 @@
 package br.pucpr.authserver.boardgames
 
+import br.pucpr.authserver.nights.NightGameRepository
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.http.MediaType
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.support.TransactionTemplate
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -30,15 +33,23 @@ class BoardGameWebTest {
     @Autowired
     lateinit var tagRepository: TagRepository
 
+    @Autowired
+    lateinit var nightGameRepository: NightGameRepository
+
+    @Autowired
+    lateinit var transactionManager: PlatformTransactionManager
+
     private val json = JsonMapper.builder().build()
 
     @BeforeEach
     fun cleanGames() {
-        boardGameRepository.findAll().forEach { game ->
-            game.tags.clear()
-            boardGameRepository.save(game)
+        TransactionTemplate(transactionManager).executeWithoutResult {
+            nightGameRepository.deleteAll()
+            nightGameRepository.flush()
+            boardGameRepository.findAll().forEach { game -> game.tags.clear() }
+            boardGameRepository.flush()
+            boardGameRepository.deleteAll()
         }
-        boardGameRepository.deleteAll()
     }
 
     @Test
