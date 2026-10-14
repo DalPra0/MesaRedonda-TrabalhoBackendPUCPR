@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mesa Redonda — ensaio 29/10</title>
+  </head>
+  <body>
+    <header class="topo">
+      <div>
+        <p class="kicker">Ensaio da apresentação · 29 de outubro</p>
+        <h1>Mesa Redonda</h1>
+      </div>
+      <form id="login" class="login">
+        <label>
+          E-mail
+          <input
+            name="email"
+            type="email"
+            autocomplete="username"
+            value="admin@authserver.com"
+            required
+          />
+        </label>
+        <label>
+          Senha
+          <input
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            value="admin"
+            required
+          />
+        </label>
+        <button type="submit">Entrar</button>
+        <button type="button" id="sair" hidden>Sair</button>
+        <p id="login-estado" class="login-estado">sem sessão</p>
+        <label class="interruptor">
+          <input id="sem-token" type="checkbox" />
+          sem token
+        </label>
+        <p class="dica">O interruptor só tira o token do apagar.</p>
+      </form>
+    </header>
+    <p id="aviso" class="aviso" hidden role="status"></p>
+    <main class="zonas">
+      <section class="zona" aria-labelledby="titulo-roteiro">
+        <h2 id="titulo-roteiro">Roteiro</h2>
+        <ol class="passos">
+          <li id="passo-1">
+            <p class="fala">“Abro a noite da SI.”</p>
+            <button type="button" id="acao-criar">Criar a noite</button>
+            <p class="endpoint">POST /api/game-nights</p>
+          </li>
+          <li id="passo-2">
+            <p class="fala">“Catan entra na mesa.”</p>
+            <button type="button" id="acao-jogo">Colocar o Catan</button>
+            <p class="endpoint">
+              Se o catálogo estiver vazio, POST /api/board-games. Depois POST
+              /api/game-nights/{id}/games/{gameId}
+            </p>
+          </li>
+          <li id="passo-3">
+            <p class="fala">“A galera confirma presença.”</p>
+            <button type="button" id="acao-membro">Inscrever a galera</button>
+            <p class="endpoint">POST /api/game-nights/{id}/members/{memberId}</p>
+          </li>
+          <li id="passo-4">
+            <p class="fala">“A mesa está fechada.”</p>
+            <button type="button" id="acao-draft">Confirmar o draft</button>
+            <p class="endpoint">POST /api/game-nights/{id}/draft/confirm · com token</p>
+          </li>
+          <li id="passo-5">
+            <p class="fala">“Sem login o delete morre. Com o token, apaga.”</p>
+            <button type="button" id="acao-apagar">Apagar com token</button>
+            <p class="endpoint" id="endpoint-apagar">DELETE da noite ou de um jogo dela</p>
+          </li>
+        </ol>
+        <p id="resultado" class="resultado" role="status"></p>
+      </section>
+      <section class="zona zona-mesa" aria-labelledby="titulo-mesa">
+        <div class="mesa-cabeca">
+          <h2 id="titulo-mesa">Mesa</h2>
+          <p id="relogio" class="relogio"></p>
+        </div>
+        <div id="noites" class="noites"></div>
+        <div id="feltro" class="feltro">
+          <p class="vazio">carregando a mesa…</p>
+        </div>
+      </section>
+      <section class="zona" id="zona-fila" hidden aria-labelledby="titulo-fila">
+        <h2 id="titulo-fila">Fila</h2>
+        <div id="fila"></div>
+      </section>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -153,7 +153,7 @@ class GameNightServiceTest {
     }
 
     @Test
-    fun `delete should remove the music room scores games registrations and the night`() {
+    fun `delete should remove games registrations and the night`() {
         val night = oneGameNight()
         val nightGame = oneNightGame(night = night)
         val registration = oneRegistration(night = night)
