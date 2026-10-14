@@ -44,6 +44,23 @@ fun oneNightGame(
     confirmed = confirmed,
 )
 
+fun oneScore(
+    id: Long? = 10L,
+    night: GameNight = oneGameNight(),
+    member: Member = oneMember(),
+    game: BoardGame = oneBoardGame(),
+    placement: Int = 1,
+    bonusPoints: Int = 0,
+    notes: String? = null,
+): ScoreEntry = ScoreEntry(
+    id = id,
+    gameNight = night,
+    member = member,
+    boardGame = game,
+    placement = placement,
+    bonusPoints = bonusPoints,
+    notes = notes,
+)
 fun oneRegistration(
     id: Long? = 1L,
     night: GameNight = oneGameNight(),
