@@ -48,7 +48,6 @@ class Bootstrapper(
                 tagRepository.save(Tag(slug = slug, label = label))
             }
         }
-
         listOf(
             "Lucas" to "lucas@pucpr.edu.br",
             "Ana" to "ana@pucpr.edu.br",
