@@ -1,7 +1,10 @@
 package br.pucpr.authserver.boardgames
 
 import br.pucpr.authserver.nights.NightGameRepository
+<<<<<<< HEAD
 import br.pucpr.authserver.nights.ScoreEntryRepository
+=======
+>>>>>>> origin/main
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
@@ -38,9 +41,12 @@ class BoardGameWebTest {
     lateinit var nightGameRepository: NightGameRepository
 
     @Autowired
+<<<<<<< HEAD
     lateinit var scoreEntryRepository: ScoreEntryRepository
 
     @Autowired
+=======
+>>>>>>> origin/main
     lateinit var transactionManager: PlatformTransactionManager
 
     private val json = JsonMapper.builder().build()
@@ -48,8 +54,11 @@ class BoardGameWebTest {
     @BeforeEach
     fun cleanGames() {
         TransactionTemplate(transactionManager).executeWithoutResult {
+<<<<<<< HEAD
             scoreEntryRepository.deleteAll()
             scoreEntryRepository.flush()
+=======
+>>>>>>> origin/main
             nightGameRepository.deleteAll()
             nightGameRepository.flush()
             boardGameRepository.findAll().forEach { game -> game.tags.clear() }

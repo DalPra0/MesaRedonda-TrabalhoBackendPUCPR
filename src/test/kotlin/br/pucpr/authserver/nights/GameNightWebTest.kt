@@ -45,9 +45,12 @@ class GameNightWebTest {
     lateinit var boardGameRepository: BoardGameRepository
 
     @Autowired
+<<<<<<< HEAD
     lateinit var scoreEntryRepository: ScoreEntryRepository
 
     @Autowired
+=======
+>>>>>>> origin/main
     lateinit var transactionManager: PlatformTransactionManager
 
     private val json = JsonMapper.builder().build()
@@ -55,8 +58,11 @@ class GameNightWebTest {
     @BeforeEach
     fun cleanNights() {
         TransactionTemplate(transactionManager).executeWithoutResult {
+<<<<<<< HEAD
             scoreEntryRepository.deleteAll()
             scoreEntryRepository.flush()
+=======
+>>>>>>> origin/main
             nightGameRepository.deleteAll()
             nightGameRepository.flush()
             registrationRepository.deleteAll()
@@ -66,8 +72,11 @@ class GameNightWebTest {
             boardGameRepository.findAll().forEach { game -> game.tags.clear() }
             boardGameRepository.flush()
             boardGameRepository.deleteAll()
+<<<<<<< HEAD
             memberRepository.findAll().forEach { it.seasonPoints = 0 }
             memberRepository.flush()
+=======
+>>>>>>> origin/main
         }
     }
 

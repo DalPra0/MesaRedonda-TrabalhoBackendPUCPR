@@ -18,7 +18,10 @@ class GameNightService(
     val registrationRepository: NightRegistrationRepository,
     val memberRepository: MemberRepository,
     val boardGameRepository: BoardGameRepository,
+<<<<<<< HEAD
     val scoreService: ScoreService,
+=======
+>>>>>>> origin/main
 ) {
     fun insert(night: GameNight): GameNight {
         validate(night)
@@ -56,7 +59,10 @@ class GameNightService(
     @Transactional
     fun delete(id: Long) {
         val night = findById(id)
+<<<<<<< HEAD
         scoreService.deleteScoresForNight(id)
+=======
+>>>>>>> origin/main
         nightGameRepository.deleteAll(nightGameRepository.findByNightId(id))
         registrationRepository.deleteAll(registrationRepository.findByNightId(id))
         repository.delete(night)
