@@ -2,6 +2,10 @@ package br.pucpr.authserver.nights
 
 import br.pucpr.authserver.boardgames.BoardGame
 import br.pucpr.authserver.boardgames.BoardGameRepository
+import br.pucpr.authserver.music.MusicRoomRepository
+import br.pucpr.authserver.music.QueueEntryRepository
+import br.pucpr.authserver.music.TrackRepository
+import br.pucpr.authserver.music.VoteRepository
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
 import org.hamcrest.Matchers.containsInAnyOrder
@@ -48,6 +52,18 @@ class GameNightWebTest {
     lateinit var scoreEntryRepository: ScoreEntryRepository
 
     @Autowired
+    lateinit var voteRepository: VoteRepository
+
+    @Autowired
+    lateinit var queueEntryRepository: QueueEntryRepository
+
+    @Autowired
+    lateinit var musicRoomRepository: MusicRoomRepository
+
+    @Autowired
+    lateinit var trackRepository: TrackRepository
+
+    @Autowired
     lateinit var transactionManager: PlatformTransactionManager
 
     private val json = JsonMapper.builder().build()
@@ -55,6 +71,14 @@ class GameNightWebTest {
     @BeforeEach
     fun cleanNights() {
         TransactionTemplate(transactionManager).executeWithoutResult {
+            voteRepository.deleteAll()
+            voteRepository.flush()
+            queueEntryRepository.deleteAll()
+            queueEntryRepository.flush()
+            musicRoomRepository.deleteAll()
+            musicRoomRepository.flush()
+            trackRepository.deleteAll()
+            trackRepository.flush()
             scoreEntryRepository.deleteAll()
             scoreEntryRepository.flush()
             nightGameRepository.deleteAll()

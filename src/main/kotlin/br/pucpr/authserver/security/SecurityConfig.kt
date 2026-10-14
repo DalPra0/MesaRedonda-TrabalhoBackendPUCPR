@@ -46,6 +46,9 @@ class SecurityConfig(
                     .requestMatchers(HttpMethod.POST, "/game-nights/*/members/*").permitAll()
                     .requestMatchers(HttpMethod.POST, "/game-nights/*/scores").permitAll()
                     .requestMatchers(HttpMethod.PUT, "/game-nights/*/scores/*").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/tracks").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/game-nights/*/queue").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/game-nights/*/queue/*/votes").permitAll()
                     .requestMatchers("/h2-console/**").permitAll()
                     .anyRequest().authenticated()
             }

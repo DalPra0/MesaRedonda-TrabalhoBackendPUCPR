@@ -4,6 +4,7 @@ import br.pucpr.authserver.boardgames.BoardGameRepository
 import br.pucpr.authserver.boardgames.oneBoardGame
 import br.pucpr.authserver.exception.NotFoundException
 import br.pucpr.authserver.exceptions.BadRequestException
+import br.pucpr.authserver.music.MusicService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.checkUnnecessaryStub
@@ -27,6 +28,7 @@ class GameNightServiceTest {
     private val memberRepository = mockk<MemberRepository>()
     private val boardGameRepository = mockk<BoardGameRepository>()
     private val scoreService = mockk<ScoreService>()
+    private val musicService = mockk<MusicService>()
     private val service = GameNightService(
         repository,
         nightGameRepository,
@@ -34,6 +36,7 @@ class GameNightServiceTest {
         memberRepository,
         boardGameRepository,
         scoreService,
+        musicService,
     )
 
     @BeforeEach
@@ -50,6 +53,7 @@ class GameNightServiceTest {
             memberRepository,
             boardGameRepository,
             scoreService,
+            musicService,
         )
     }
 
@@ -154,6 +158,7 @@ class GameNightServiceTest {
         val nightGame = oneNightGame(night = night)
         val registration = oneRegistration(night = night)
         every { repository.findById(1L) } returns Optional.of(night)
+        every { musicService.deleteForNight(1L) } returns Unit
         every { scoreService.deleteScoresForNight(1L) } returns Unit
         every { nightGameRepository.findByNightId(1L) } returns listOf(nightGame)
         every { nightGameRepository.deleteAll(listOf(nightGame)) } returns Unit
@@ -163,6 +168,7 @@ class GameNightServiceTest {
 
         service.delete(1L)
 
+        verify(exactly = 1) { musicService.deleteForNight(1L) }
         verify(exactly = 1) { scoreService.deleteScoresForNight(1L) }
         verify(exactly = 1) { repository.delete(night) }
     }

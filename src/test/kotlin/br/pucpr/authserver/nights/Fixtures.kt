@@ -61,6 +61,7 @@ fun oneScore(
     bonusPoints = bonusPoints,
     notes = notes,
 )
+
 fun oneRegistration(
     id: Long? = 1L,
     night: GameNight = oneGameNight(),
