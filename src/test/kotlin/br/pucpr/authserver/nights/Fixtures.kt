@@ -44,7 +44,6 @@ fun oneNightGame(
     confirmed = confirmed,
 )
 
-<<<<<<< HEAD
 fun oneScore(
     id: Long? = 10L,
     night: GameNight = oneGameNight(),
@@ -62,9 +61,6 @@ fun oneScore(
     bonusPoints = bonusPoints,
     notes = notes,
 )
-
-=======
->>>>>>> origin/main
 fun oneRegistration(
     id: Long? = 1L,
     night: GameNight = oneGameNight(),

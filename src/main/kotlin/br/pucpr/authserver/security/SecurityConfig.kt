@@ -44,11 +44,8 @@ class SecurityConfig(
                     .requestMatchers(HttpMethod.PUT, "/game-nights/*").permitAll()
                     .requestMatchers(HttpMethod.POST, "/game-nights/*/games/*").permitAll()
                     .requestMatchers(HttpMethod.POST, "/game-nights/*/members/*").permitAll()
-<<<<<<< HEAD
                     .requestMatchers(HttpMethod.POST, "/game-nights/*/scores").permitAll()
                     .requestMatchers(HttpMethod.PUT, "/game-nights/*/scores/*").permitAll()
-=======
->>>>>>> origin/main
                     .requestMatchers("/h2-console/**").permitAll()
                     .anyRequest().authenticated()
             }
