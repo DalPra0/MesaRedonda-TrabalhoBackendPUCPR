@@ -6,7 +6,9 @@ Backend da liga de board games (noite de jogo + fila de música). Spring Boot 4 
 
 ## Vídeo
 
-Link do YouTube entra aqui antes da entrega.
+[Link do YouTube entra aqui antes da entrega.
+](https://youtu.be/j5Fc3lggD7s)
+
 
 ## Base
 
