@@ -13,18 +13,6 @@ Link do YouTube entra aqui antes da entrega.
 Projeto baseado em [ViniGodoy/backend-dev](https://github.com/ViniGodoy/backend-dev), branch 06-testes-final (commit f4217af).
 Usuários, roles, login e JWT vieram da aula; o domínio abaixo é meu.
 
-## Declaração de uso de IA
-
-Declaração padrão exigida pela Resolução nº 274/2024 do CONSUN (item 2, IX) e pelo item 6.1 do plano de ensino:
-
-> Durante a preparação deste projeto de software (código-fonte, testes automatizados e documentação), o(s) autor(es) usaram
-> o Claude Code (Anthropic, modelo Claude Sonnet 5.5) para escrever e revisar código das entidades, controllers e services,
-> escrever testes automatizados, montar os filtros dinâmicos e redigir a documentação (README e guia de apresentação).
-> Após usar essa ferramenta, o(s) autor(es) revisaram e editaram o conteúdo conforme necessário e assumem total
-> responsabilidade pelo conteúdo.
-
-A IA não consta como coautora (item 2, IV da resolução).
-
 ## Como rodar
 
 Java 21.
