@@ -465,7 +465,7 @@ async function onErase(): Promise<void> {
   try {
     const outcome = await erase(detail, without);
     const success = without
-      ? outcome.status === 403
+      ? outcome.status === 401
       : outcome.status === 200 || outcome.status === 204;
     const frase = without ? "Sem login o delete morre." : "Com o token, apaga.";
     if (success) {
@@ -473,7 +473,7 @@ async function onErase(): Promise<void> {
     } else {
       const detailText = serverMessage(outcome.text);
       const extra = detailText ? ` ${detailText}` : "";
-      const expected = without ? "403" : "200 ou 204";
+      const expected = without ? "401" : "200 ou 204";
       setResult(`${outcome.target} → ${outcome.status}. Esperava ${expected}.${extra}`, "erro");
     }
   } catch (error) {

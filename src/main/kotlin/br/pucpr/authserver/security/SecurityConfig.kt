@@ -5,11 +5,13 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
 import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy.STATELESS
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.HttpStatusEntryPoint
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
@@ -32,6 +34,8 @@ class SecurityConfig(
             .cors(Customizer.withDefaults())
             .csrf { it.disable() }
             .headers { it.frameOptions { fo -> fo.disable() } }
+            // Sem token (ou token inválido) é 401; 403 fica para quem está logado mas não pode.
+            .exceptionHandling { it.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)) }
             .authorizeHttpRequests { requests ->
                 requests
                     .requestMatchers(HttpMethod.GET).permitAll()
@@ -40,6 +44,10 @@ class SecurityConfig(
                     .requestMatchers(HttpMethod.POST, "/board-games").permitAll()
                     .requestMatchers(HttpMethod.PUT, "/board-games/*").permitAll()
                     .requestMatchers(HttpMethod.POST, "/board-games/*/tags/*").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/tags").permitAll()
+                    .requestMatchers(HttpMethod.PUT, "/tags/*").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/members").permitAll()
+                    .requestMatchers(HttpMethod.PUT, "/members/*").permitAll()
                     .requestMatchers(HttpMethod.POST, "/game-nights").permitAll()
                     .requestMatchers(HttpMethod.PUT, "/game-nights/*").permitAll()
                     .requestMatchers(HttpMethod.POST, "/game-nights/*/games/*").permitAll()

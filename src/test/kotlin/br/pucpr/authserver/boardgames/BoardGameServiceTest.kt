@@ -14,6 +14,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.data.domain.Sort
+import org.springframework.data.jpa.domain.Specification
 import java.util.Optional
 
 class BoardGameServiceTest {
@@ -118,7 +119,7 @@ class BoardGameServiceTest {
     fun `search should filter by tag players and name and sort by name ascending`() {
         val expected = listOf(oneBoardGame())
         val sort = Sort.by(Sort.Direction.ASC, "name")
-        every { repository.search("cat", "party", 3, 4, sort) } returns expected
+        every { repository.findAll(any<Specification<BoardGame>>(), sort) } returns expected
 
         val result = service.search(
             tag = " party ",
@@ -129,6 +130,17 @@ class BoardGameServiceTest {
         )
 
         result shouldBe expected
+    }
+
+    @Test
+    fun `search should reject invalid maxDuration and weight`() {
+        shouldThrow<BadRequestException> {
+            service.search(null, null, null, null, null, maxDuration = 0)
+        }.message shouldBe "maxDuration must be at least 1"
+
+        shouldThrow<BadRequestException> {
+            service.search(null, null, null, null, null, weight = 9)
+        }.message shouldBe "weight must be between 1 and 5"
     }
 
     @Test

@@ -3,6 +3,7 @@ package br.pucpr.authserver.nights
 import br.pucpr.authserver.boardgames.BoardGameRepository
 import br.pucpr.authserver.exception.NotFoundException
 import br.pucpr.authserver.exceptions.BadRequestException
+import br.pucpr.authserver.filters.DynamicFilter
 import br.pucpr.authserver.music.MusicService
 import br.pucpr.authserver.users.SortDir
 import org.slf4j.LoggerFactory
@@ -34,11 +35,13 @@ class GameNightService(
         from: Instant?,
         to: Instant?,
         sort: String?,
+        filters: Map<String, String> = emptyMap(),
     ): List<GameNight> {
         if (from != null && to != null && from.isAfter(to)) {
             throw BadRequestException("from cannot be after to")
         }
-        return repository.findAll(gameNightSearch(status, from, to), parseSort(sort)).toList()
+        val dynamic = DynamicFilter.of<GameNight>(filters, FILTER_FIELDS, NAMED_PARAMS)
+        return repository.findAll(gameNightSearch(status, from, to).and(dynamic), parseSort(sort)).toList()
     }
 
     fun findById(id: Long) = repository.findByIdOrNull(id) ?: throw NotFoundException(id)
@@ -213,6 +216,13 @@ class GameNightService(
 
     companion object {
         private val SORT_FIELDS = setOf("scheduledAt", "title", "status", "location")
+        private val NAMED_PARAMS = setOf("status", "from", "to", "sort")
+        private val FILTER_FIELDS = mapOf(
+            "title" to String::class.java,
+            "location" to String::class.java,
+            "status" to GameNightStatus::class.java,
+            "scheduledAt" to java.time.Instant::class.java,
+        )
         val log = LoggerFactory.getLogger(GameNightService::class.java)
     }
 }

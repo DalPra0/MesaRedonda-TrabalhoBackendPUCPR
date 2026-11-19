@@ -12,14 +12,17 @@ spring:
   h2:
     console:
       enabled: true
+  mvc:
+    problemdetails:
+      enabled: true
   web:
     error:
       whitelabel:
         enabled: false
       include-message: always
       include-binding-errors: always
-      include-stacktrace: always
-      include-exception: true
+      include-stacktrace: never
+      include-exception: false
 
 server:
   servlet:

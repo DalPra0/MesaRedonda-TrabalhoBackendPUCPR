@@ -7,6 +7,8 @@ import br.pucpr.authserver.nights.responses.GameNightDetailResponse
 import br.pucpr.authserver.nights.responses.GameNightResponse
 import br.pucpr.authserver.nights.responses.NightGameResponse
 import br.pucpr.authserver.nights.responses.NightMemberResponse
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.validation.Valid
 import org.springframework.format.annotation.DateTimeFormat
@@ -26,13 +28,15 @@ import java.time.Instant
 @RestController
 @RequestMapping("/game-nights")
 class GameNightController(val service: GameNightService) {
+    @Operation(summary = "Lista noites com filtro dinâmico", description = "Campos: title, location, status, scheduledAt (ISO-8601). Operadores: eq, ne, gt, gte, lt, lte, like (like só em texto). Ex.: ?status.ne=CANCELLED&scheduledAt.gte=2026-11-01T00:00:00Z&title.like=liga")
     @GetMapping
     fun list(
         @RequestParam status: GameNightStatus? = null,
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) from: Instant? = null,
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) to: Instant? = null,
         @RequestParam sort: String? = null,
-    ) = service.search(status, from, to, sort)
+        @Parameter(hidden = true) @RequestParam filters: Map<String, String> = emptyMap(),
+    ) = service.search(status, from, to, sort, filters)
         .map { GameNightResponse(it) }
         .let { ResponseEntity.ok(it) }
 
@@ -118,7 +122,7 @@ class GameNightController(val service: GameNightService) {
         }
 
     @SecurityRequirement(name = "jwt-auth")
-    @PostMapping("/{nightId}/draft/confirm")
+    @PutMapping("/{nightId}/draft")
     fun confirmDraft(@PathVariable nightId: Long) =
         service.confirmDraft(nightId)
             .let { GameNightResponse(it) }

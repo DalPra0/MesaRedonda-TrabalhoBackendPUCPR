@@ -187,7 +187,7 @@ class ScoreWebTest {
             post("/game-nights/$nightId/scores")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(scoreJson(lucasId, catanId, placement = 0, bonusPoints = 0))
-        ).andExpect(status().isBadRequest)
+        ).andExpect(status().`is`(422))
 
         mockMvc.perform(
             post("/game-nights/$nightId/scores")
@@ -218,7 +218,7 @@ class ScoreWebTest {
         ).get(0).get("id").asLong()
 
         mockMvc.perform(delete("/game-nights/$nightId/scores/$azulScoreId"))
-            .andExpect(status().isForbidden)
+            .andExpect(status().isUnauthorized)
 
         val token = loginToken()
 

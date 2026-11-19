@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface VoteRepository : JpaRepository<Vote, Long> {
+    fun existsByMemberId(memberId: Long): Boolean
+
     @Query(
         """
             select v from Vote v

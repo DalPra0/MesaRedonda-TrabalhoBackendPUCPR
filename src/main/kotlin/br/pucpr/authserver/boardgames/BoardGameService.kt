@@ -2,6 +2,7 @@ package br.pucpr.authserver.boardgames
 
 import br.pucpr.authserver.exception.NotFoundException
 import br.pucpr.authserver.exceptions.BadRequestException
+import br.pucpr.authserver.filters.DynamicFilter
 import br.pucpr.authserver.nights.ScoreService
 import br.pucpr.authserver.users.SortDir
 import org.slf4j.LoggerFactory
@@ -32,6 +33,9 @@ class BoardGameService(
         maxPlayers: Int?,
         name: String?,
         sort: String?,
+        maxDuration: Int? = null,
+        weight: Int? = null,
+        filters: Map<String, String> = emptyMap(),
     ): List<BoardGame> {
         if (minPlayers != null && minPlayers < 1) {
             throw BadRequestException("minPlayers must be at least 1")
@@ -39,13 +43,22 @@ class BoardGameService(
         if (maxPlayers != null && maxPlayers < 1) {
             throw BadRequestException("maxPlayers must be at least 1")
         }
-        return repository.search(
+        if (maxDuration != null && maxDuration < 1) {
+            throw BadRequestException("maxDuration must be at least 1")
+        }
+        if (weight != null && weight !in 1..5) {
+            throw BadRequestException("weight must be between 1 and 5")
+        }
+        val filter = boardGameSearch(
             name = name.blankToNull(),
             tag = tag.blankToNull(),
             minPlayers = minPlayers,
             maxPlayers = maxPlayers,
-            sort = parseSort(sort),
+            maxDuration = maxDuration,
+            weight = weight,
         )
+        val dynamic = DynamicFilter.of<BoardGame>(filters, FILTER_FIELDS, NAMED_PARAMS)
+        return repository.findAll(filter.and(dynamic), parseSort(sort))
     }
 
     fun findById(id: Long) = repository.findByIdOrNull(id) ?: throw NotFoundException(id)
@@ -137,6 +150,15 @@ class BoardGameService(
 
     companion object {
         private val SORT_FIELDS = setOf("name", "minPlayers", "maxPlayers", "durationMinutes", "weight")
+        private val NAMED_PARAMS = setOf("tag", "minPlayers", "maxPlayers", "name", "maxDuration", "weight", "sort")
+        private val FILTER_FIELDS = mapOf(
+            "name" to String::class.java,
+            "description" to String::class.java,
+            "minPlayers" to Int::class.javaObjectType,
+            "maxPlayers" to Int::class.javaObjectType,
+            "durationMinutes" to Int::class.javaObjectType,
+            "weight" to Int::class.javaObjectType,
+        )
         val log = LoggerFactory.getLogger(BoardGameService::class.java)
     }
 }
