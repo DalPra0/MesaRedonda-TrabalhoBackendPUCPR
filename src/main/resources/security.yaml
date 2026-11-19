@@ -1,5 +1,6 @@
 security:
   issuer: "PUCPR AuthServer"
-  secret: YlgKSPnanTQdQZIytMlj8vzscM5llqp3n2TiD2Nd214syWIU5D_WRQ_XXhBjjUAR
+  # Em produção defina a variável de ambiente JWT_SECRET; o valor depois dos dois pontos é só para desenvolvimento.
+  secret: ${JWT_SECRET:YlgKSPnanTQdQZIytMlj8vzscM5llqp3n2TiD2Nd214syWIU5D_WRQ_XXhBjjUAR}
   expireHours: 48
   adminExpireHours: 1

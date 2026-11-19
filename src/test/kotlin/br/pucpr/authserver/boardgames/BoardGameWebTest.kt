@@ -113,13 +113,13 @@ class BoardGameWebTest {
             post("/board-games")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gameJson("", 3, 4, 90, 9, "invalido"))
-        ).andExpect(status().isBadRequest)
+        ).andExpect(status().`is`(422))
 
         mockMvc.perform(delete("/board-games/$gameId"))
-            .andExpect(status().isForbidden)
+            .andExpect(status().isUnauthorized)
 
         mockMvc.perform(delete("/board-games/$gameId/tags/$partyId"))
-            .andExpect(status().isForbidden)
+            .andExpect(status().isUnauthorized)
 
         val token = loginToken()
 

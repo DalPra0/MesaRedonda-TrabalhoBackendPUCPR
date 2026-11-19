@@ -4,6 +4,7 @@ plugins {
 	id("org.springframework.boot") version "4.0.5"
 	id("io.spring.dependency-management") version "1.1.7"
 	kotlin("plugin.jpa") version "2.2.21"
+	jacoco
 }
 
 group = "br.pucpr"
@@ -69,4 +70,14 @@ allOpen {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+	finalizedBy(tasks.jacocoTestReport)
+}
+
+// Cobertura de testes: build/reports/jacoco/test/html/index.html
+tasks.jacocoTestReport {
+	dependsOn(tasks.test)
+	reports {
+		xml.required = true
+		html.required = true
+	}
 }

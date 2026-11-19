@@ -2,6 +2,7 @@ package br.pucpr.authserver.music
 
 import br.pucpr.authserver.exception.NotFoundException
 import br.pucpr.authserver.exceptions.BadRequestException
+import br.pucpr.authserver.filters.DynamicFilter
 import br.pucpr.authserver.users.SortDir
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Sort
@@ -21,12 +22,18 @@ class TrackService(
         return saved
     }
 
-    fun search(artist: String?, title: String?, sort: String?): List<Track> =
-        repository.search(
-            artist = artist.blankToNull(),
-            title = title.blankToNull(),
-            sort = parseSort(sort),
+    fun search(
+        artist: String?,
+        title: String?,
+        sort: String?,
+        filters: Map<String, String> = emptyMap(),
+    ): List<Track> {
+        val dynamic = DynamicFilter.of<Track>(filters, FILTER_FIELDS, NAMED_PARAMS)
+        return repository.findAll(
+            trackSearch(artist = artist.blankToNull(), title = title.blankToNull()).and(dynamic),
+            parseSort(sort),
         )
+    }
 
     fun findById(id: Long) = repository.findByIdOrNull(id) ?: throw NotFoundException(id)
 
@@ -71,6 +78,12 @@ class TrackService(
     private fun String?.blankToNull() = this?.trim()?.ifBlank { null }
 
     companion object {
+        private val NAMED_PARAMS = setOf("artist", "title", "sort")
+        private val FILTER_FIELDS = mapOf(
+            "title" to String::class.java,
+            "artist" to String::class.java,
+            "durationSeconds" to Int::class.javaObjectType,
+        )
         private val SORT_FIELDS = setOf("title", "artist", "durationSeconds")
         private val log = LoggerFactory.getLogger(TrackService::class.java)
     }

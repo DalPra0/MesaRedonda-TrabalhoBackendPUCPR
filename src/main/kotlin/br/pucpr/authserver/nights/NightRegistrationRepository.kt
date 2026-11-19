@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface NightRegistrationRepository : JpaRepository<NightRegistration, Long> {
+    fun existsByMemberId(memberId: Long): Boolean
+
     @Query(
         """
             select r from NightRegistration r

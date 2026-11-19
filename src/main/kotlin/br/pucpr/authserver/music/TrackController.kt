@@ -2,6 +2,8 @@ package br.pucpr.authserver.music
 
 import br.pucpr.authserver.music.requests.CreateTrackRequest
 import br.pucpr.authserver.music.responses.TrackResponse
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -18,12 +20,14 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/tracks")
 class TrackController(val service: TrackService) {
+    @Operation(summary = "Lista faixas com filtro dinâmico", description = "Campos: title, artist, durationSeconds. Operadores: eq, ne, gt, gte, lt, lte, like. Ex.: ?durationSeconds.lte=240&artist.like=ana&sort=title,asc")
     @GetMapping
     fun list(
         @RequestParam artist: String? = null,
         @RequestParam title: String? = null,
         @RequestParam sort: String? = null,
-    ) = service.search(artist, title, sort)
+        @Parameter(hidden = true) @RequestParam filters: Map<String, String> = emptyMap(),
+    ) = service.search(artist, title, sort, filters)
         .map { TrackResponse(it) }
         .let { ResponseEntity.ok(it) }
 

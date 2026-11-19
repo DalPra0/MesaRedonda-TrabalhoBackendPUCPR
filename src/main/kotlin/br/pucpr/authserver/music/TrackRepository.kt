@@ -1,18 +1,23 @@
 package br.pucpr.authserver.music
 
-import org.springframework.data.domain.Sort
+import jakarta.persistence.criteria.Predicate
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.Query
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.stereotype.Repository
 
 @Repository
-interface TrackRepository : JpaRepository<Track, Long> {
-    @Query(
-        """
-            select t from Track t
-            where (:artist is null or lower(t.artist) like lower(concat('%', :artist, '%')))
-              and (:title is null or lower(t.title) like lower(concat('%', :title, '%')))
-        """
-    )
-    fun search(artist: String?, title: String?, sort: Sort): List<Track>
-}
+interface TrackRepository : JpaRepository<Track, Long>, JpaSpecificationExecutor<Track>
+
+// Filtro dinâmico: só os parâmetros informados viram condição.
+fun trackSearch(artist: String? = null, title: String? = null): Specification<Track> =
+    Specification { root, _, cb ->
+        val predicates = mutableListOf<Predicate>()
+        if (artist != null) {
+            predicates += cb.like(cb.lower(root.get("artist")), "%${artist.lowercase()}%")
+        }
+        if (title != null) {
+            predicates += cb.like(cb.lower(root.get("title")), "%${title.lowercase()}%")
+        }
+        cb.and(*predicates.toTypedArray())
+    }

@@ -9,6 +9,7 @@ import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -54,7 +55,7 @@ class QueueController(val service: MusicService) {
     }
 
     @SecurityRequirement(name = "jwt-auth")
-    @PostMapping("/{entryId}/play")
+    @PutMapping("/{entryId}/playing")
     fun play(
         @PathVariable nightId: Long,
         @PathVariable entryId: Long,
@@ -63,7 +64,7 @@ class QueueController(val service: MusicService) {
         .let { ResponseEntity.ok(it) }
 
     @SecurityRequirement(name = "jwt-auth")
-    @PostMapping("/{entryId}/skip")
+    @PutMapping("/{entryId}/skipped")
     fun skip(
         @PathVariable nightId: Long,
         @PathVariable entryId: Long,

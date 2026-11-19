@@ -3,6 +3,8 @@ package br.pucpr.authserver.boardgames
 import br.pucpr.authserver.boardgames.requests.CreateBoardGameRequest
 import br.pucpr.authserver.boardgames.requests.UpdateBoardGameRequest
 import br.pucpr.authserver.boardgames.responses.BoardGameResponse
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -20,14 +22,18 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/board-games")
 class BoardGameController(val service: BoardGameService) {
+    @Operation(summary = "Lista jogos com filtro dinâmico", description = "Campos: name, description, minPlayers, maxPlayers, durationMinutes, weight. Use campo=valor ou campo.operador=valor (operadores: eq, ne, gt, gte, lt, lte, like). Ex.: ?durationMinutes.lte=60&weight.gte=2&name.like=cat&tag=coop&sort=name,asc")
     @GetMapping
     fun list(
         @RequestParam tag: String? = null,
         @RequestParam minPlayers: Int? = null,
         @RequestParam maxPlayers: Int? = null,
         @RequestParam name: String? = null,
+        @RequestParam maxDuration: Int? = null,
+        @RequestParam weight: Int? = null,
         @RequestParam sort: String? = null,
-    ) = service.search(tag, minPlayers, maxPlayers, name, sort)
+        @Parameter(hidden = true) @RequestParam filters: Map<String, String> = emptyMap(),
+    ) = service.search(tag, minPlayers, maxPlayers, name, sort, maxDuration, weight, filters)
         .map { BoardGameResponse(it) }
         .let { ResponseEntity.ok(it) }
 

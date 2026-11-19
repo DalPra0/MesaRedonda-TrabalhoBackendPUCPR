@@ -228,8 +228,8 @@ export async function enrollSeed(
 }
 
 export async function confirmDraft(nightId: number): Promise<GameNight> {
-  const { status, text } = await send(`/api/game-nights/${nightId}/draft/confirm`, {
-    method: "POST",
+  const { status, text } = await send(`/api/game-nights/${nightId}/draft`, {
+    method: "PUT",
     auth: true,
   });
   if (status !== 200) {

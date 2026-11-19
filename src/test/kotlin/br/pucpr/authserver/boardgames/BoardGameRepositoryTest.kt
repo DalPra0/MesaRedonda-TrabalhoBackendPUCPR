@@ -55,25 +55,34 @@ class BoardGameRepositoryTest @Autowired constructor(
         codenames.tags.add(party)
         games.save(codenames)
 
-        games.search(name = null, tag = "party", minPlayers = null, maxPlayers = null, sort = Sort.by("name"))
-            .map { it.name }
+        fun names(spec: org.springframework.data.jpa.domain.Specification<BoardGame>, sort: Sort) =
+            games.findAll(spec, sort).map { it.name }
+
+        // sem nenhum parâmetro o filtro dinâmico não restringe nada
+        names(boardGameSearch(), Sort.by("name")).shouldContainExactly("Azul", "Catan", "Codenames")
+
+        names(boardGameSearch(tag = "party"), Sort.by("name"))
             .shouldContainExactly("Catan", "Codenames")
 
-        games.search(name = "azu", tag = null, minPlayers = null, maxPlayers = null, sort = Sort.by("name"))
-            .map { it.name }
+        names(boardGameSearch(name = "azu"), Sort.by("name"))
             .shouldContainExactly("Azul")
 
-        games.search(name = null, tag = null, minPlayers = 3, maxPlayers = 4, sort = Sort.by("weight"))
-            .map { it.name }
+        names(boardGameSearch(minPlayers = 3, maxPlayers = 4), Sort.by("weight"))
             .shouldContainExactly("Catan")
 
-        games.search(
-            name = null,
-            tag = "party",
-            minPlayers = null,
-            maxPlayers = null,
-            sort = Sort.by(Sort.Direction.DESC, "name"),
-        ).map { it.name }
+        names(boardGameSearch(tag = "party"), Sort.by(Sort.Direction.DESC, "name"))
             .shouldContainExactly("Codenames", "Catan")
+
+        // critérios combinados: só entra quem atende a todos
+        names(boardGameSearch(tag = "party", maxDuration = 30), Sort.by("name"))
+            .shouldContainExactly("Codenames")
+
+        names(boardGameSearch(maxDuration = 60), Sort.by("durationMinutes"))
+            .shouldContainExactly("Codenames", "Azul")
+
+        names(boardGameSearch(weight = 2), Sort.by("name"))
+            .shouldContainExactly("Azul", "Catan")
+
+        names(boardGameSearch(tag = "euro", weight = 1), Sort.by("name")).shouldContainExactly()
     }
 }

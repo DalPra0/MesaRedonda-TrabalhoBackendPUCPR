@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ScoreEntryRepository : JpaRepository<ScoreEntry, Long> {
+    fun existsByMemberId(memberId: Long): Boolean
+
     @Query(
         """
             select s from ScoreEntry s

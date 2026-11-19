@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.support.TransactionTemplate
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -140,10 +141,10 @@ class MusicWebTest {
             post("/tracks")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"title":"Curta","artist":"Ninguem","durationSeconds":0}""")
-        ).andExpect(status().isBadRequest)
+        ).andExpect(status().`is`(422))
 
         mockMvc.perform(delete("/tracks/$meioId"))
-            .andExpect(status().isForbidden)
+            .andExpect(status().isUnauthorized)
 
         val lucasId = memberRepository.findByDisplayName("Lucas")!!.id!!
         val anaId = memberRepository.findByDisplayName("Ana")!!.id!!
@@ -154,7 +155,7 @@ class MusicWebTest {
             .andExpect(status().isNotFound)
 
         mockMvc.perform(post("/game-nights/$nightId/music-room"))
-            .andExpect(status().isForbidden)
+            .andExpect(status().isUnauthorized)
 
         val token = loginToken()
 
@@ -270,18 +271,18 @@ class MusicWebTest {
         mockMvc.perform(get("/game-nights/$nightId/queue").param("sort", "nope"))
             .andExpect(status().isBadRequest)
 
-        mockMvc.perform(post("/game-nights/$nightId/queue/$firstId/play"))
-            .andExpect(status().isForbidden)
+        mockMvc.perform(put("/game-nights/$nightId/queue/$firstId/playing"))
+            .andExpect(status().isUnauthorized)
 
         mockMvc.perform(
-            post("/game-nights/$nightId/queue/$firstId/play")
+            put("/game-nights/$nightId/queue/$firstId/playing")
                 .header("Authorization", "Bearer $token")
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.status").value("PLAYING"))
 
         mockMvc.perform(
-            post("/game-nights/$nightId/queue/$secondId/play")
+            put("/game-nights/$nightId/queue/$secondId/playing")
                 .header("Authorization", "Bearer $token")
         )
             .andExpect(status().isOk)
@@ -298,7 +299,7 @@ class MusicWebTest {
             .andExpect(jsonPath("$[0].id").value(secondId))
 
         mockMvc.perform(
-            post("/game-nights/$nightId/queue/$thirdId/skip")
+            put("/game-nights/$nightId/queue/$thirdId/skipped")
                 .header("Authorization", "Bearer $token")
         )
             .andExpect(status().isOk)
@@ -340,7 +341,7 @@ class MusicWebTest {
             .andExpect(jsonPath("$[0].skipRequests").value(1))
 
         mockMvc.perform(delete("/game-nights/$nightId/queue/$secondId"))
-            .andExpect(status().isForbidden)
+            .andExpect(status().isUnauthorized)
 
         mockMvc.perform(
             delete("/game-nights/$nightId/queue/$secondId")
@@ -353,7 +354,7 @@ class MusicWebTest {
             .andExpect(jsonPath("$[0].position").value(2))
 
         mockMvc.perform(
-            post("/game-nights/$nightId/queue/$secondId/play")
+            put("/game-nights/$nightId/queue/$secondId/playing")
                 .header("Authorization", "Bearer $token")
         ).andExpect(status().isBadRequest)
 
@@ -366,7 +367,7 @@ class MusicWebTest {
         ).andExpect(status().isBadRequest)
 
         mockMvc.perform(delete("/game-nights/$nightId/music-room"))
-            .andExpect(status().isForbidden)
+            .andExpect(status().isUnauthorized)
 
         mockMvc.perform(
             delete("/game-nights/$nightId/music-room")
@@ -428,7 +429,7 @@ class MusicWebTest {
 
         val queued = enqueue(nightId, trackId, lucasId)
         mockMvc.perform(
-            post("/game-nights/$nightId/queue/${queued.get("id").asLong()}/play")
+            put("/game-nights/$nightId/queue/${queued.get("id").asLong()}/playing")
                 .header("Authorization", "Bearer $token")
         ).andExpect(status().isOk)
 

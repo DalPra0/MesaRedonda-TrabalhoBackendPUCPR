@@ -169,13 +169,13 @@ class GameNightWebTest {
             post("/game-nights")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(nightJson(" ", "2026-10-03T19:00:00Z", "Lab 2"))
-        ).andExpect(status().isBadRequest)
+        ).andExpect(status().`is`(422))
 
         mockMvc.perform(get("/game-nights/999999"))
             .andExpect(status().isNotFound)
 
         mockMvc.perform(delete("/game-nights/$earlyId"))
-            .andExpect(status().isForbidden)
+            .andExpect(status().isUnauthorized)
 
         val token = loginToken()
 
@@ -260,16 +260,16 @@ class GameNightWebTest {
             .andExpect(status().isNotFound)
 
         mockMvc.perform(delete("/game-nights/$nightId/games/$azulId"))
-            .andExpect(status().isForbidden)
+            .andExpect(status().isUnauthorized)
         mockMvc.perform(delete("/game-nights/$nightId/members/$anaId"))
-            .andExpect(status().isForbidden)
-        mockMvc.perform(post("/game-nights/$nightId/draft/confirm"))
-            .andExpect(status().isForbidden)
+            .andExpect(status().isUnauthorized)
+        mockMvc.perform(put("/game-nights/$nightId/draft"))
+            .andExpect(status().isUnauthorized)
 
         val token = loginToken()
 
         mockMvc.perform(
-            post("/game-nights/$nightId/draft/confirm")
+            put("/game-nights/$nightId/draft")
                 .header("Authorization", "Bearer $token")
         )
             .andExpect(status().isOk)
@@ -280,14 +280,14 @@ class GameNightWebTest {
             .andExpect(jsonPath("$[1].confirmed").value(true))
 
         mockMvc.perform(
-            post("/game-nights/$nightId/draft/confirm")
+            put("/game-nights/$nightId/draft")
                 .header("Authorization", "Bearer $token")
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.status").value("LIVE"))
 
         mockMvc.perform(
-            post("/game-nights/$nightId/draft/confirm")
+            put("/game-nights/$nightId/draft")
                 .header("Authorization", "Bearer $token")
         )
             .andExpect(status().isOk)
@@ -318,7 +318,7 @@ class GameNightWebTest {
         ).andExpect(status().isOk)
 
         mockMvc.perform(
-            post("/game-nights/$nightId/draft/confirm")
+            put("/game-nights/$nightId/draft")
                 .header("Authorization", "Bearer $token")
         ).andExpect(status().isBadRequest)
     }
